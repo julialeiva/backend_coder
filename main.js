@@ -53,7 +53,7 @@ class ProductManager{
     getProductById(id){
         return this.products.find((product) => product.id === id) ? this.products.find((product) => product.id === id ): "No Encontrado";
     }
-}
+};
 
 //evaluación
 const products = new ProductManager();
