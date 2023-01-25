@@ -20,6 +20,14 @@ class ProductManager {
   };
 
   addProduct = async (title, description, price, thumbnail, code, stock) => {
+        if(this.existProduct(code)){
+            console.error("El producto ya existe");
+            return;
+        }
+        if(title === "" || description === "" || price === "" || thumbnail === "" || code === "" || stock === ""){
+            console.error("Debe brindar todos los parametros");
+            return;
+        }
     let newProduct = {
       title,
       description,
