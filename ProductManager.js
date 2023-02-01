@@ -4,7 +4,7 @@ class ProductManager {
   constructor() {
     this.products = [];
     this.path = "productos.txt";
-  }
+  };
 
   static id = 0;
 
@@ -15,12 +15,12 @@ class ProductManager {
   };
 
   readProducts = async () => {
-    let productos = await fs.readFile(this.path, "utf-8");
-    return JSON.parse(productos);
+    let allProducts = await fs.readFile(this.path, "utf-8");
+    return JSON.parse(allProducts);
   };
 
   addProduct = async (title, description, price, thumbnail, code, stock) => {
-        if(this.existProduct(code)){
+        if(this.exist(code)){
             console.error("El producto ya existe");
             return;
         }
@@ -47,8 +47,8 @@ class ProductManager {
   };
 
   getProducts = async () => {
-    let productos = await this.readProducts();
-    console.log(productos);
+    let productsAll = await this.readProducts();
+    console.log(productsAll);
   };
 
   exist = async (id) => {
@@ -88,14 +88,15 @@ class ProductManager {
       return false;
     }
   };
-}
+};
 
 const productos = new ProductManager();
 
 //Llamamos a getproducts tiene que traer array vacío
+productos.getProducts();
 // 
 // Agregamos dos productos y deben agregarse sin repetirse
-// productos.addProduct({"producto prueba", "Este es un producto prueba", 200, "Sin imagen", "abc1234", 25})
+// productos.addProduct("Café con leche", "Café con leche caliente", 250, "Sin imagen", "123", 5)
 // productos.addProduct({"producto prueba 2", "Este es otro producto prueba", 200, "Sin imagen", "abc1234", 25})
 
 // //Consultamos un Producto por su ID si el ID no existe debe dar error
@@ -115,3 +116,4 @@ const productos = new ProductManager();
 
 //eliminamos un Producto por su ID
 // productos.deleteProducts(2);
+
