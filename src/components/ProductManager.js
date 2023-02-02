@@ -1,9 +1,9 @@
 import { promises as fs } from "fs";
 
-class ProductManager {
+export default class ProductManager {
   constructor() {
     this.products = [];
-    this.path = "productos.txt";
+    this.path = "./doc/productos.txt";
   };
 
   static id = 0;
@@ -20,7 +20,7 @@ class ProductManager {
   };
 
   addProduct = async (title, description, price, thumbnail, code, stock) => {
-        if(this.exist(code)){
+        if(this.exist(code) == code){
             console.error("El producto ya existe");
             return;
         }
@@ -90,30 +90,20 @@ class ProductManager {
   };
 };
 
-const productos = new ProductManager();
 
-//Llamamos a getproducts tiene que traer array vacío
-productos.getProducts();
-// 
-// Agregamos dos productos y deben agregarse sin repetirse
-// productos.addProduct("Café con leche", "Café con leche caliente", 250, "Sin imagen", "123", 5)
-// productos.addProduct({"producto prueba 2", "Este es otro producto prueba", 200, "Sin imagen", "abc1234", 25})
 
-// //Consultamos un Producto por su ID si el ID no existe debe dar error
-// productos.getProductsById(2);
-// productos.getProductsById(3);
+// Agregamos 10 productos
+// productos.addProduct("Café con leche", "Café con leche caliente", 250, "Sin imagen", "123", 5);
+// productos.addProduct("Ice Coffe", "Café con leche frío", 250, "Sin imagen", "1234", 3);
+// productos.addProduct("Jugo de Naranja","Jugo de Naranja exprimido 300 cc",250, "Sin imagen", "12345", 7);
+// productos.addProduct("Sueño en Sandwich", "Tortita raspada con jamón y queso caliente", 300, "Sin imagen", "343", 10);
+// productos.addProduct("Medialuna", "Medialuna dulce clásica", 150, "Sin imagen", "3456", 4);
+// productos.addProduct("Chocotorta", "Porción de chocotorta", 500, "Sin imangen", "5425", 9);
+// productos.addProduct("Yogo", "Yogurt griego con granola, frutas y miel", 500, "Sin imagen", "1326", 2);
+// productos.addProduct("Tarta de coco", "Porción de tarta de coco con dulce de leche", 400, "Sin imagen", "4357", 3);
+// productos.addProduct("Submarino", "Tazón de leche caliente con barra de chocolate", 350, "Sin imagen", "4528", 5);
+// productos.addProduct("Ensalada de Fruta", "Tazón de frutas", 500, "Sin imagen", "4645", 5);
 
-//Actualizamos un Producto existente sin que se modifique el id
-// productos.updateProduct({
-//   title: "producto prueba",
-//   description: "Este es un producto prueba",
-//   price: 400,
-//   thumbnail: "Sin imagen",
-//   code: "abc123",
-//   stock: 25,
-//   id: 1,
-// });
+// productos.getProducts();
 
-//eliminamos un Producto por su ID
-// productos.deleteProducts(2);
 
