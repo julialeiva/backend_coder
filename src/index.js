@@ -1,34 +1,24 @@
 import express from "express";
-import ProductManager from "./components/ProductManager.js";
+import cartRouter from "./routes/cartRouter.js";
+import productsRouter from "./routes/productsRouter.js";
 
-const app = express();
-app.use(express.urlencoded({extended : true}));
 
-const productos = new ProductManager();
-const readProducts = productos.readProducts();
+//Configuration
+const app = express()
+const PORT = 8080
 
-app.get("/productos", async (req, res) => {
-    let limit = parseInt(req.query.limit)
-    if(!limit) return res.send(await readProducts)
-    let allProducts = await readProducts
-    let productLimit = allProducts.slice(0, limit)
-    res.send(productLimit)
-});
+//Middlewares
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }));
 
-app.get("/productos/:id", async (req, res) => {
-    let id = parseInt(req.params.id)
-    let allProducts = await readProducts
-    let getProductsById = allProducts.find (function (product) {
-            return product.id === id;
-        })
-    res.send(getProductsById)
-});
+//Static
+app.use(express.static('public'));
 
-const PORT = 8080;
-const server = app.listen(PORT, () => {
-    console.log("Ejecutandose puerto 8080")
-});
+//Routes
+app.use('/api/carts', cartRouter)
+app.use('/api/products', productsRouter)
 
-server.on("error", (error) => {
-    console.log("Error del servidor")
-});
+//Server
+app.listen(PORT, () => {
+  console.log(`\n\tServidor encendido y escuchando en el puerto ${PORT}.\n\tVisita http://localhost:${PORT}`);
+})

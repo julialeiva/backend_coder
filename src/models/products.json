@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "title": "Café con leche",
+    "description": "Café con leche caliente",
+    "code": "123",
+    "price": 300,
+    "status": true,
+    "stock": 5,
+    "category": "Bebidas",
+    "thumbnail": "Sin imagen"
+  },
+  {
+    "id": 2,
+    "title": "Iced Coffee",
+    "description": "Café con leche frío y con helado",
+    "code": "124",
+    "price": 300,
+    "status": true,
+    "stock": 5,
+    "category": "Bebidas",
+    "thumbnail": "Sin imagen"
+  }
+]
