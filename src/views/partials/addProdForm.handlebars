@@ -1,0 +1,87 @@
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content" id="addProdForm" autocomplete="off">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Agrega los detalles de tu producto</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-floating my-1">
+          <input type="text" class="form-control" name="title" placeholder="Titulo" />
+          <label>Titulo</label>
+        </div>
+        <div class="form-floating my-1">
+          <input type="text" class="form-control" name="description" placeholder="Descripcion" />
+          <label>Descripcion</label>
+        </div>
+        <div class="form-floating my-1">
+          <input type="text" class="form-control" name="code" placeholder="Codigo" />
+          <label>Codigo</label>
+        </div>
+        <div class="form-floating my-1">
+          <input type="text" class="form-control" name="price" placeholder="Precio" />
+          <label>Precio</label>
+        </div>
+        <div class="form-floating my-1">
+          <input type="text" class="form-control" name="stock" placeholder="Disponibilidad" />
+          <label>Disponibilidad</label>
+        </div>
+        <div class="form-floating my-1">
+          <select class="form-select" name="category">
+            <option value="" selected>Selecciona una categoria</option>
+            <option value="Bedidas">Bebidas</option>
+            <option value="Comida">Acompañantes</option>
+          </select>
+          <label>Categoria</label>
+        </div>
+        <div class="form-floating my-1">
+          <input type="text" class="form-control" name="thumbnails" placeholder="Thumbnails" />
+          <label>Thumbnails</label>
+        </div>
+        <div class="form-check form-switch my-2">
+          <input type="checkbox" class="form-check-input" name="status" role="switch" />
+          <label class="form-check-label">Deseas publicar tu producto?</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" type="submit">Agregar producto</button>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="d-flex justify-content-end">
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Agregar un
+    Producto</button>
+</div>
+
+<script>
+
+  const socket = io
+
+  const addProdForm = document.getElementById('addProdForm')
+  addProdForm.addEventListener("submit", (e) => {
+    e.preventDefault()
+    const t = e.target
+    const title = t.title.value
+    const description = t.description.value
+    const code = t.code.value
+    const price = t.price.value
+    const stock = t.stock.value
+    const category = t.category.value
+    const status = t.status.checked
+    const thumbnails = [t.thumbnails.value]
+    const prodDetails = { title, description, code, price, stock, category, status, thumbnails }
+    io.emit('addProd', JSON.stringify(prodDetails))
+  })
+
+  io.on('addProdRes', (msg) => {
+    const res = JSON.parse(msg)
+    if (res.isOk) {
+      addProdForm.reset()
+    } else {
+      console.log(res.msg)
+    }
+  })
+
+</script>

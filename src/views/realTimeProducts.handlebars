@@ -1,0 +1,65 @@
+<div class="container">
+  <h2>Todos los productos en tiempo real</h2>
+  {{> addProdForm}}
+  <div class="my-1" id="prodListContainer"></div>
+</div>
+
+<script>
+const handlerRemove = (id) => {
+  socket.emit('rmProd', id)
+}
+const handlerProdListComp = (prodList) => {
+  const prodListContainer = document.getElementById('prodListContainer')
+  prodListContainer.innerText = ``
+  if (prodList.length <= 0) {
+    const pNode = document.createElement('p')
+    pNode.innerText = `No se encontraron productos para listar`
+    prodListContainer.append(pNode)
+  } else {
+    const headerTexts = ['ID','Titulo', 'Precio', 'Categoria', 'Codigo', 'Accion']
+    const tableNode = document.createElement('table')
+    tableNode.setAttribute('class', 'table')
+    const tableHeadNode = document.createElement('thead')
+    const tableHRNode = document.createElement('tr')
+    headerTexts.forEach(headerText => {
+      const headerEle = document.createElement('th')
+      headerEle.innerText = headerText
+      tableHRNode.append(headerEle)
+    });
+    tableHeadNode.append(tableHRNode)
+    tableNode.append(tableHeadNode)
+    const tableBodyNode = document.createElement('tbody')
+    for (let i = 0; i < prodList.length; i++) {
+      const buttons = `<button type="button" class="btn btn-danger" onclick="handlerRemove('${prodList[i].id}')"><i class="bi bi-trash3"></i></button>`
+      
+      const tableBRNode = document.createElement('tr')
+      const idNode = document.createElement('td')
+      idNode.innerText = prodList[i].id
+      const titleNode = document.createElement('td')
+      titleNode.innerText = prodList[i].title
+      const priceNode = document.createElement('td')
+      priceNode.innerText = prodList[i].price
+      const categoryNode = document.createElement('td')
+      categoryNode.innerText = prodList[i].category
+      const codeNode = document.createElement('td')
+      codeNode.innerText = prodList[i].code
+      const buttonsNode = document.createElement('td')
+      buttonsNode.innerHTML = buttons
+      tableBRNode.append(idNode)
+      tableBRNode.append(titleNode)
+      tableBRNode.append(priceNode)
+      tableBRNode.append(categoryNode)
+      tableBRNode.append(codeNode)
+      tableBRNode.append(buttonsNode)
+      tableBodyNode.append(tableBRNode)
+    }
+    
+    tableNode.append(tableBodyNode)
+    prodListContainer.append(tableNode)
+  }
+}
+socket.on('proListUpdated', (prodList) => {
+  handlerProdListComp(JSON.parse(prodList))
+})
+socket.emit('getProListUpdated')
+</script>

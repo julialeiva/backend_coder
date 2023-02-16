@@ -1,0 +1,38 @@
+<div class="container">
+  <h2>Todos los productos</h2>
+  {{> addProdForm}}
+  <div class="my-1">
+    {{#if hasProds}}
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Titulo</th>
+            <th scope="col">Descripcion</th>
+            <th scope="col">Codigo</th>
+            <th scope="col">Precio</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Stock</th>
+            <th scope="col">Categoria</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each prods}}
+          <tr>
+            <th scope="row">{{this.id}}</th>
+            <td>{{this.title}}</td>
+            <td>{{this.description}}</td>
+            <td>{{this.code}}</td>
+            <td>{{this.price}}</td>
+            <td>{{this.status}}</td>
+            <td>{{this.stock}}</td>
+            <td>{{this.category}}</td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    {{else}}
+      <p class="text-center">No se encontraron productos para listar</p>
+    {{/if}}
+  </div>
+</div>
