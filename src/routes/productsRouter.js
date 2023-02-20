@@ -1,54 +1,72 @@
 import { Router } from "express"
-import ProductManager from "../controller/ProductManager.js"
+import ProductManage from '../controller/ProductManager.js'
 
+const productos = new ProductManage('src/models/products.json')
 const productsRouter = Router()
-const prod = new ProductManager
 
-productsRouter.route('/')
-  .get(async (req, res) => {
-    const limit = parseInt(req.query.limit)
-    const newLocal = '/api/products?limit=100'
-    if (isNaN(limit)) return res.redirect(newLocal)
-    let result = await prod.getProducts()
-    res.status(200).send(result.slice(0, limit))
-  })
+// await productos.verifyStaticId()
 
-  .post(async (req, res) => {
-    const proToAdd = { ...req.body, status: true }
-    try {
-      await prod.addProduct(proToAdd)
-      res.status(201).send(`Producto agregado exitosamente`);
-    } catch (error) {
-      res.status(406).send(`Ha ocurrido un error al intentar agregar un producto. ${error}`);
-    }
-  })
+// (GET ALL) http://localhost:8080/api/productos
+productsRouter.get('/', async (req, res) => {
+  // Generar peticion
+  const aux = await productos.getProducts(req.query.limit)
+  console.log(aux)
 
-productsRouter.route('/:pid')
-  .get(async (req, res) => {
-    try {
-      const result = await prod.getProductById(parseInt(req.params.pid))
-      res.status(200).send(result)
-    } catch (error) {
-      res.status(400).send(`Ha ocurrido un error al intentar consultar un producto. ${error}`)
-    }
-  })
+  // Socket io
+  req.app.get('socketio').emit('getUpdtProds', aux) // Prueba para mostar por consola
 
-  .put(async (req, res) => {
-    try {
-      await prod.updateProduct(parseInt(req.params.pid), req.body)
-      res.status(200).send(`Producto actualizado exitosamente`)
-    } catch (error) {
-      res.status(400).send(`Ha ocurrido un error, proceso de actualizacion cancelada. ${error}`)
-    }
-  })
-  .delete(async (req, res) => {
-    try {
-      await prod.deleteProduct(parseInt(req.params.pid))
-      res.status(200).send('Producto eliminado exitosamente')
-    } catch (error) {
-      res.status(400).send(`Ha ocurrido un error, proceso de eliminacion cancelada. ${error}`)
-    }
-  })
+  // Res default
+  res.send(`Todos los productos`)
+})
+
+// (GET ONE) http://localhost:8080/api/productos/1
+productsRouter.get('/:pid', async (req, res) => {
+  // Generar peticion
+  console.log(await productos.getProductById(req.params.pid))
+
+  // Res default
+  res.send(`Obtener producto`)
+})
+
+// (ADD ONE) http://localhost:8080/api/productos/ (body required)
+productsRouter.post('/', async (req, res) => {
+  // Generar peticion
+  await productos.addProduct(req.body)
+
+  // aux con la lista de productos actualizada
+  const aux = await productos.getProducts(req.query.limit)
+
+  // Socket io
+  req.app.get('socketio').emit('getUpdtProds', aux) // emitir al agregar uno
+
+  // Res default
+  res.send(`Agregar producto`)
+})
+
+// (UPDATE ONE) http://localhost:8080/api/productos/1 (body required)
+productsRouter.put('/:pid', async (req, res) => {
+  // Generar peticion
+  await productos.updateProduct(req.params.pid, req.body)
+
+  // Res default
+  res.send(`Modificar producto`)
+})
+
+// (DELETE ONE) http://localhost:8080/api/productos/1
+productsRouter.delete('/:pid', async (req, res) => {
+  // Generar peticion
+  await productos.deleteProduct(Number(req.params.pid))
+
+  // aux con la lista de productos actualizada
+  const aux = await productos.getProducts(req.query.limit)
+
+  // Socket io
+  req.app.get('socketio').emit('getUpdtProds', aux) // emitir al eliminar uno
+
+  // Res default
+  res.send(`Eliminar producto`)
+})
+
 
 export default productsRouter
 

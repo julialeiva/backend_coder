@@ -2,11 +2,11 @@ import express from "express";
 import { engine } from "express-handlebars";
 import cartRouter from "./routes/cartRouter.js";
 import productsRouter from "./routes/productsRouter.js";
-import viewsRouter from "./routes/viewsRouter.js";
 import * as path from "path"
-import { __dirname } from './utils/path.js'
+import {__dirname} from './path.js'
 import { Server } from "socket.io";
 import ProductManager from "./controller/ProductManager.js";
+import realTimeProductsRouter from "./routes/realTimeProductsRouter.js"
 
 const prodManager = new ProductManager
 
@@ -26,38 +26,17 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.engine("handlebars", engine())
 app.set("view engine", "handlebars")
-app.set("views", path.resolve(__dirname, "../views"))
+app.set("views", path.resolve(__dirname, "./views")) //`${__dirname}/views`
 
-io.on('connection', (e) => {
-  e.on('getProListUpdated', async () => {
-    const prods = await prodManager.getProducts()
-    e.emit('proListUpdated', JSON.stringify(prods))
+io.on("connection", socket => {
+  socket.on('msgCliente', info => { // Captura de info de cliente
+     console.log(info)
   })
-  e.on('addProd', async (data) => {
-    try {
-      await prodManager.addProduct(JSON.parse(data))
-      const prods = await prodManager.getProducts()
-      socket.emit('proListUpdated', JSON.stringify(prods))
-      socket.emit('addProdRes', JSON.stringify({ isOk: true, msg: `Producto agregado satisfactoriamente.` }))
-    } catch (error) {
-      socket.emit('addProdFRes', JSON.stringify({ isOk: false, msg: `Hubo un error al agregar un producto.`, valid: [] }))
-    }
-  })
-  e.on('rmProd', async (id) => {
-    try {
-      await prodManager.deleteProduct(id)
-      const prods = await prodManager.getProducts()
-      socket.emit('proListUpdated', JSON.stringify(prods))
-      socket.emit('rmProdError', JSON.stringify({ isOk: true, msg: `Producto eliminado satisfactoriamente.` }))
-    } catch (error) {
-      socket.emit('rmProdError', JSON.stringify({ isOk: false, msg: `Hubo un error al agregar un producto.` }))
-    }
-  })
-  return e
+  socket.emit('msgServer', 'Servidor conectado')
 })
 
 //Routes
-app.use('/static', express.static(path.join(__dirname + '/public'))) //Static
-app.use('/', viewsRouter) //Views
+app.use('/', express.static(__dirname + '/public'))
 app.use('/api/carts', cartRouter) //API
-app.use('/api/products', productsRouter) //API
+app.use('/api/productos', productsRouter) //API
+app.use('/', realTimeProductsRouter)
