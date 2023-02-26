@@ -20,6 +20,7 @@ const server = app.listen(PORT, () => {
 })
 
 const io = new Server(server);
+app.set('socketio', io)
 
 //Middlewares
 app.use(express.json())
